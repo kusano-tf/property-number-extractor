@@ -1,0 +1,24 @@
+// V9.19以降
+
+// "土地・"で始まらない行を削除
+#line = linecount2;
+while(#line > 0) {
+  $a = getlinetext( #line );
+  if (strstr( $a, "土地・" ) != 0 ) {
+    movetolineno 0, #line;
+    deleteline;
+  }
+  #line = #line - 1;
+}
+
+// 所在のみを残して余計な部分を削除
+replaceallfast @"^土地・([^\t]*)\t.*$", @"\1", regular;
+
+// 地番の前にタブを挿入
+replaceallfast @"^([^０-９]*)([０-９]+)", @"\1\t\2", regular;
+
+// "－"を含むパターンの処理
+replaceallfast @"([０-９]+)－([０-９]+)$", @"\1番\2\tの土地", regular;
+
+// "－"を含まないパターンの処理
+replaceallfast @"([０-９]+)$", @"\1番\tの土地", regular;
